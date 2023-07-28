@@ -23,7 +23,7 @@ body {
 img {
   display: block;
   max-width: 100%;
-  height: auto;
+  height: calc(100vh - 100px);
 }
 
 /*
@@ -174,7 +174,7 @@ img {
 
 .Modal {
   max-width: calc(100vw - 48px);
-  max-height: calc(100vh - 24px);
+  max-height: calc(100vh - 100px);
 }
 
 /*
@@ -204,4 +204,10 @@ img {
 .Button:hover,
 .Button:focus {
   background-color: #303f9f;
+}
+.ButtonContainer{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 5px;
 }
