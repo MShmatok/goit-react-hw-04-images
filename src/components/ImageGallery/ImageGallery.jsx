@@ -52,6 +52,9 @@ class ImageGallery extends Component {
           status: STATUS.FULFILLED,
         };
       });
+      if (data.hits.length === 0) {
+        throw new Error('Щось пішло не так. Спробуй інший запит...');
+      }
     } catch (error) {
       this.setState({ status: STATUS.REJECTED, messageError: error.message });
     }
@@ -76,6 +79,9 @@ class ImageGallery extends Component {
           status: STATUS.FULFILLED,
         };
       });
+      if (data.hits.length === 0) {
+        throw new Error('Щось пішло не так. Спробуй інший запит...');
+      }
     } catch (error) {
       this.setState({ status: STATUS.REJECTED, messageError: error.message });
     }
@@ -103,8 +109,9 @@ class ImageGallery extends Component {
       status,
       showModal,
       dataImageForModal,
+      messageError,
     } = this.state;
-    const { PENDING } = STATUS;
+    const { PENDING, REJECTED } = STATUS;
     return (
       <>
         <ul className="ImageGallery">
@@ -120,7 +127,9 @@ class ImageGallery extends Component {
             );
           })}
         </ul>
+
         {status === PENDING && <Loader />}
+        {status === REJECTED && <h1>{messageError}</h1>}
         {totalHits / perPage >= page && (
           <Button onClick={this.handlerLoadMore} />
         )}
