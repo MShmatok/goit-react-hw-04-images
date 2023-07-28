@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import App from 'service/Application';
 import { animateScroll } from 'react-scroll';
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import Button from 'components/Button/Button';
 import Loader from 'components/Loader/Loader';
 import Modal from 'components/Modal/Modal';
-
 import '../../Styles/styles.css';
 
 const STATUS = {
@@ -68,7 +68,6 @@ class ImageGallery extends Component {
     try {
       this.setState({ status: STATUS.PENDING });
       const data = await App.getImages(searchText, 1, perPage);
-
       this.setState(prevState => {
         return {
           page: 1,
@@ -87,6 +86,7 @@ class ImageGallery extends Component {
       this.setState({ status: STATUS.REJECTED, messageError: error.message });
     }
   };
+
   handlerLoadMore = () => {
     this.setState(
       prevState => ({
@@ -97,15 +97,18 @@ class ImageGallery extends Component {
       }
     );
   };
+
   handelModal = () => {
     this.setState(prevState => ({ showModal: !prevState.showModal }));
   };
+
   onClickImage = (largeImageURL, tags) => {
     this.setState({
       showModal: true,
       dataImageForModal: { largeImageURL, tags },
     });
   };
+
   render() {
     const {
       page,
@@ -151,3 +154,7 @@ class ImageGallery extends Component {
 }
 
 export default ImageGallery;
+
+ImageGallery.protoTypes = {
+  searchText: PropTypes.string.isRequired,
+};

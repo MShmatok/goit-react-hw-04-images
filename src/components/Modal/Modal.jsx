@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { createPortal } from 'react-dom';
 import Loader from 'components/Loader/Loader';
 import '../../Styles/styles.css';
@@ -48,3 +49,10 @@ class Modal extends Component {
 }
 
 export default Modal;
+Modal.protoTypes = {
+  onClose: PropTypes.func.isRequired,
+  dataImageForModal: PropTypes.shape({
+    largeImageURL: PropTypes.string.isRequired,
+    tags: PropTypes.string.isRequired,
+  }),
+};

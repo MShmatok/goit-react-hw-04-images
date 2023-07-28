@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import '../../Styles/styles.css';
 
 class ImageGalleryItem extends Component {
@@ -18,3 +19,7 @@ class ImageGalleryItem extends Component {
 }
 
 export default ImageGalleryItem;
+ImageGalleryItem.propTypes = {
+  webformatURL: PropTypes.string.isRequired,
+  onClickImage: PropTypes.func.isRequired,
+};

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import '../../Styles/styles.css';
 
 class Searchbar extends Component {
@@ -42,3 +43,7 @@ class Searchbar extends Component {
 }
 
 export default Searchbar;
+
+Searchbar.protoTypes = {
+  handlerSubmit: PropTypes.func.isRequired,
+};
