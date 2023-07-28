@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import App from 'service/Application';
+import { animateScroll } from 'react-scroll';
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import Button from 'components/Button/Button';
 import Loader from 'components/Loader/Loader';
@@ -87,9 +88,14 @@ class ImageGallery extends Component {
     }
   };
   handlerLoadMore = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
+    this.setState(
+      prevState => ({
+        page: prevState.page + 1,
+      }),
+      () => {
+        animateScroll.scrollMore(500);
+      }
+    );
   };
   handelModal = () => {
     this.setState(prevState => ({ showModal: !prevState.showModal }));
