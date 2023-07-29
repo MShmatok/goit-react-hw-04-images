@@ -26,5 +26,13 @@ const ImageGallery = ({ gallery, onClickImage }) => {
 export default ImageGallery;
 
 ImageGallery.protoTypes = {
-  searchText: PropTypes.string.isRequired,
+  gallery: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+      largeImageURL: PropTypes.string.isRequired,
+      tags: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
+  onClickImage: PropTypes.func.isRequired,
 };
