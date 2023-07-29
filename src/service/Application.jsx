@@ -6,15 +6,15 @@ const pixabay = axios.create({
   baseURL: `https://pixabay.com/api`,
 });
 
-const getImages = async (searchText, page, per_page) => {
+const getImages = async (searchText, page, per_page = 12) => {
   const { data } = await pixabay(
     `?key=${key}&q=${searchText}&page=${page}&image_type=photo&orientation=horizontal&per_page=${per_page}`
   );
   return data;
 };
 
-const App = {
+const Application = {
   getImages,
 };
 
-export default App;
+export default Application;
