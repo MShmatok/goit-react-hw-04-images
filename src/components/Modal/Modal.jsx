@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { createPortal } from 'react-dom';
 import Loader from 'components/Loader/Loader';
@@ -6,47 +6,40 @@ import '../../Styles/styles.css';
 
 const modalRoot = document.querySelector('#modal-root');
 
-class Modal extends Component {
-  state = { loader: true };
+const Modal = ({ onClose, dataImageForModal: { largeImageURL, tags } }) => {
+  const [loader, setLoader] = useState(true);
 
-  componentDidMount() {
-    window.addEventListener('keydown', this.handlerKeyDown);
-  }
+  useEffect(() => {
+    const handlerKeyDown = e => {
+      if (e.code === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handlerKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handlerKeyDown);
+    };
+  }, [onClose]);
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handlerKeyDown);
-  }
-
-  handlerKeyDown = e => {
-    if (e.code === 'Escape') {
-      this.props.onClose();
-    }
-  };
-  handlerOnClickClose = e => {
+  const handlerOnClickClose = e => {
     if (e.target === e.currentTarget) {
-      this.props.onClose();
+      onClose();
     }
   };
-  handlerCloseLoader = () => {
-    this.setState({ loader: false });
+  const handlerCloseLoader = () => {
+    setLoader(p => !p);
   };
-  render() {
-    const { largeImageURL, tags } = this.props.dataImageForModal;
-    return createPortal(
-      <div className="Overlay" onClick={this.handlerOnClickClose}>
-        <div className="Modal">
-          <img
-            src={largeImageURL}
-            alt={tags}
-            onLoad={this.handlerCloseLoader}
-          />
-        </div>
-        {this.state.loader && <Loader />}
-      </div>,
-      modalRoot
-    );
-  }
-}
+
+  return createPortal(
+    <div className="Overlay" onClick={handlerOnClickClose}>
+      <div className="Modal">
+        <img src={largeImageURL} alt={tags} onLoad={handlerCloseLoader} />
+      </div>
+      {loader && <Loader />}
+    </div>,
+    modalRoot
+  );
+};
 
 export default Modal;
 Modal.protoTypes = {

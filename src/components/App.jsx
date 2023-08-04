@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../Styles/styles.css';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
@@ -7,6 +7,7 @@ import Button from 'components/Button/Button';
 import Loader from 'components/Loader/Loader';
 import Modal from 'components/Modal/Modal';
 import { animateScroll } from 'react-scroll';
+import { useRef } from 'react';
 
 const PER_PAGE = 12;
 const STATUS = {
@@ -16,93 +17,73 @@ const STATUS = {
   IDLE: 'IDLE',
 };
 
-class App extends Component {
-  state = {
-    searchText: '',
-    gallery: [],
-    page: 1,
-    totalHits: 0,
-    status: STATUS.IDLE,
-    messageError: '',
-    dataImageForModal: null,
-  };
-  handlerSubmit = searchText => {
-    this.setState({ searchText, page: 1, totalHits: 0, gallery: [] });
-  };
+const App = () => {
+  const [searchText, setSearchText] = useState('');
+  const [gallery, setGallery] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalHits, setTotalHits] = useState(0);
+  const [status, setStatus] = useState(STATUS.IDLE);
+  const [messageError, setMessageError] = useState('');
+  const [dataImageForModal, setDataImageForModal] = useState(null);
+  const firstRun = useRef(true);
 
-  componentDidUpdate(_, prevState) {
-    const { page, searchText } = this.state;
-    if (prevState.page !== page || prevState.searchText !== searchText) {
-      this.getGallery();
-    }
-  }
-
-  getGallery = async () => {
-    const { page, searchText } = this.state;
-
+  const getGallery = useCallback(async () => {
     try {
-      this.setState({ status: STATUS.PENDING });
+      setStatus(STATUS.PENDING);
       const data = await Application.getImages(searchText, page);
 
-      this.setState(prevState => {
-        return {
-          gallery: [...prevState.gallery, ...data.hits],
-          totalHits: data.totalHits,
-          status: STATUS.FULFILLED,
-        };
-      });
+      setGallery(p => [...p, ...data.hits]);
+      setTotalHits(data.totalHits);
+      setStatus(STATUS.FULFILLED);
+
       if (data.hits.length === 0) {
         throw new Error('Щось пішло не так. Спробуй інший запит...');
       }
     } catch (error) {
-      this.setState({ status: STATUS.REJECTED, messageError: error.message });
+      setStatus(STATUS.REJECTED);
+      setMessageError(error.message);
     }
+  }, [page, searchText]);
+
+  useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+    getGallery();
+  }, [searchText, page, getGallery]);
+
+  const handlerSubmit = searchTextSub => {
+    if (searchText === searchTextSub) {
+      return;
+    }
+    setSearchText(searchTextSub);
+    setPage(1);
+    setTotalHits(0);
+    setGallery([]);
   };
 
-  handlerLoadMore = () => {
-    this.setState(
-      prevState => ({
-        page: prevState.page + 1,
-      }),
-      () => {
-        animateScroll.scrollMore(500);
-      }
-    );
+  const handlerLoadMore = () => {
+    setPage(p => p + 1);
+    animateScroll.scrollMore(500);
   };
 
-  handelModal = (modalData = null) => {
-    this.setState({
-      dataImageForModal: modalData,
-    });
+  const handelModal = (modalData = null) => {
+    setDataImageForModal(modalData);
   };
 
-  render() {
-    const {
-      gallery,
-      totalHits,
-      page,
-      status,
-      messageError,
-      dataImageForModal,
-    } = this.state;
-    return (
-      <>
-        <Searchbar handlerSubmit={this.handlerSubmit} />
-        <ImageGallery gallery={gallery} onClickImage={this.handelModal} />
-        {status === 'PENDING' && <Loader />}
-        {status === 'REJECTED' && <h1>{messageError}</h1>}
-        {totalHits / PER_PAGE >= page && (
-          <Button onClick={this.handlerLoadMore} />
-        )}
-        {dataImageForModal && (
-          <Modal
-            onClose={this.handelModal}
-            dataImageForModal={dataImageForModal}
-          />
-        )}
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <Searchbar handlerSubmit={handlerSubmit} />
+      <ImageGallery gallery={gallery} onClickImage={handelModal} />
+      {status === 'PENDING' && <Loader />}
+      {status === 'REJECTED' && <h1>{messageError}</h1>}
+      {totalHits / PER_PAGE >= page && <Button onClick={handlerLoadMore} />}
+      {dataImageForModal && (
+        <Modal onClose={handelModal} dataImageForModal={dataImageForModal} />
+      )}
+    </>
+  );
+};
 
 export { App };

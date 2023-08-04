@@ -11,6 +11,7 @@ const ImageGallery = ({ gallery, onClickImage }) => {
           return (
             <ImageGalleryItem
               key={id}
+              tags={tags}
               webformatURL={webformatURL}
               onClickImage={() => {
                 onClickImage({ largeImageURL, tags });
