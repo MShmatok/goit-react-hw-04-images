@@ -15,7 +15,7 @@ const STATUS = {
   REJECTED: 'REJECTED',
   IDLE: 'IDLE',
 };
-
+const test = 1;
 class App extends Component {
   state = {
     searchText: '',
