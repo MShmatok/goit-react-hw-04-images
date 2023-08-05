@@ -51,7 +51,7 @@ const App = () => {
       return;
     }
     getGallery();
-  }, [searchText, page, getGallery]);
+  }, [getGallery]);
 
   const handlerSubmit = searchTextSub => {
     if (searchText === searchTextSub) {
